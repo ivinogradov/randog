@@ -22,19 +22,15 @@ class ViewController: UIViewController {
             let decoder = JSONDecoder()
             let imageData = try! decoder.decode(DogImage.self, from: data)
             
-            guard let url = URL(string: imageData.message) else {
+            guard let imageUrl = URL(string: imageData.message) else {
                 return
             }
-            let imageTask = URLSession.shared.dataTask(with: url) { (data, response, error) in
-                guard let data = data else {
-                    return
-                }
-                let image = UIImage(data: data)
+        
+            DogAPI.requestImageFile(url: imageUrl) { (image, error) in
                 DispatchQueue.main.async {
                     self.dogImage.image = image
                 }
             }
-            imageTask.resume()
         }
         task.resume()
     }

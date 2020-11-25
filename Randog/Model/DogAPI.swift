@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class DogAPI {
     enum Endpoint: String {
@@ -14,6 +15,17 @@ class DogAPI {
         var url: URL {
             return URL(string: self.rawValue)!
         }
-        
+    }
+    
+    class func requestImageFile(url: URL, completionHandler: @escaping (UIImage?, Error?) -> Void) {
+        let imageTask = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            guard let data = data else {
+                completionHandler(nil, error)
+                return
+            }
+            let downloadedImage = UIImage(data: data)
+            completionHandler(downloadedImage, nil)
+        }
+        imageTask.resume()
     }
 }
