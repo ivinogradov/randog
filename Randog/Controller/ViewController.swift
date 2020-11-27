@@ -12,13 +12,15 @@ class ViewController: UIViewController {
     @IBOutlet weak var dogImage: UIImageView!
     @IBOutlet weak var breedPicker: UIPickerView!
     
-    let breeds: [String] = ["germanshepherd", "Poodle"]
+    var breeds: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         breedPicker.dataSource = self
         breedPicker.delegate = self
+        
+        DogAPI.requestBreedsList(completionHandler: handleBreedListResponse(breeds:error:))
     }
 
     func handleImageFileResponse(image: UIImage?, error: Error?) {
@@ -33,6 +35,16 @@ class ViewController: UIViewController {
         }
         
         DogAPI.requestImageFile(url: imageUrl, completionHandler: handleImageFileResponse(image:error:))
+    }
+    
+    func handleBreedListResponse(breeds: [String]?, error: Error?) {
+        if let breeds = breeds {
+            self.breeds = breeds
+            
+            DispatchQueue.main.async { [self] in
+                breedPicker.reloadAllComponents()
+            }
+        }
     }
 }
 

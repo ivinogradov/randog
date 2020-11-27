@@ -12,6 +12,7 @@ class DogAPI {
     enum Endpoint {
         case randomImageFromAllDogsCollection
         case randomImageForBreed(String)
+        case listAllBreeds
         
         var url: URL {
             return URL(string: self.stringValue)!
@@ -22,6 +23,8 @@ class DogAPI {
                 return "https://dog.ceo/api/breeds/image/random"
             case .randomImageForBreed(let breed):
                 return "https://dog.ceo/api/breed/\(breed)/images/random"
+            case .listAllBreeds:
+                return "https://dog.ceo/api/breeds/list/all"
             }
         }
     }
@@ -54,5 +57,25 @@ class DogAPI {
             }
         }
         task.resume()
+    }
+    
+    class func requestBreedsList(completionHandler: @escaping ([String]?, Error?) -> ()) {
+        //request list of breeds
+        let allBreedsTask = URLSession.shared.dataTask(with: self.Endpoint.listAllBreeds.url) {
+        (data, response, networkError) in
+            guard let data = data else {
+                completionHandler(nil, networkError)
+                return
+            }
+            let decoder = JSONDecoder()
+            
+            do {
+                let breedsData = try decoder.decode(DogBreeds.self, from: data)
+                completionHandler(breedsData.breeds.keys.map({$0}), nil)
+            } catch {
+                completionHandler(nil, error)
+            }
+        }
+        allBreedsTask.resume()
     }
 }
