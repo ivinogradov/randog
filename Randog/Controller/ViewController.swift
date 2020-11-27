@@ -12,7 +12,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var dogImage: UIImageView!
     @IBOutlet weak var breedPicker: UIPickerView!
     
-    let breeds: [String] = ["German Shepherd", "Poodle"]
+    let breeds: [String] = ["germanshepherd", "Poodle"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +50,6 @@ extension ViewController: UIPickerViewDataSource, UIPickerViewDelegate {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        DogAPI.requestRandomImage(completionHandler: handleRandomImageResponse(dogImage:error:))
+        DogAPI.requestRandomImage(breed: breeds[row],completionHandler: handleRandomImageResponse(dogImage:error:))
     }
 }
